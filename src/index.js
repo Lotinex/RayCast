@@ -164,20 +164,21 @@ class RenderingEngine {
     static rays = [];
     static ctx = document.getElementById('stage').getContext('2d');
     static update(){
-        _.arrayLoop(RenderingEngine.entities, e => {
-            e.update()
-        }) 
+        for(const entity of RenderingEngine.entities){
+            entity.update()
+        }
     }
     static loop(){
         RenderingEngine.update()
         RenderingEngine.render()
+        requestAnimationFrame(RenderingEngine.loop)
     }
     static render(){
         RenderingEngine.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-        _.arrayLoop(RenderingEngine.entities, e => {
-            e.render()
-        })
-        _.arrayLoop(RenderingEngine.rays, ray => {
+        for(const entity of RenderingEngine.entities){
+            entity.render()
+        }
+        for(const ray of RenderingEngine.rays){
             RenderingEngine.ctx.save()
             RenderingEngine.ctx.beginPath()
             RenderingEngine.ctx.strokeStyle = 'red';
@@ -186,7 +187,7 @@ class RenderingEngine {
             RenderingEngine.ctx.stroke()
             RenderingEngine.ctx.closePath()
             RenderingEngine.ctx.restore()
-        })
+        }
     }
     static init(){
         document.getElementById('stage').width = window.innerWidth;
@@ -200,11 +201,12 @@ class RenderingEngine {
         RenderingEngine.entities.push(new Wall(1000, 100, 50, 300)) // Walls
 
         RenderingEngine.entities.push(new Wall(750, 500, 1400, 100)) //Ground
-        _.createFrameLoop(this.loop)
 
-        _.loop(360, i => {
+
+        requestAnimationFrame(RenderingEngine.loop)
+        for(let i=0; i<360; i++){
             Physics2D.RayCast(i, new Point(500, 100))
-        })
+        }
     }
 }
 RenderingEngine.init() //Entry
